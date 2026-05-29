@@ -1,0 +1,75 @@
+name: Build and Release Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Unit Tests
+        run: npm run test
+
+      - name: Package Extension (Zip)
+        run: |
+          mkdir -p build
+          # Create a clean release zip excluding developer files
+          zip -r build/markdown-clipper-${{ github.ref_name }}.zip . \
+            -x "node_modules/*" \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x ".gitignore" \
+            -x "package.json" \
+            -x "package-lock.json" \
+            -x "vitest.config.js" \
+            -x "popup/utils.test.js" \
+            -x "README.md" \
+            -x "CHROMEWEBSTORE.md" \
+            -x "generate_icons.py" \
+            -x "build/*"
+
+      - name: Generate Checksum
+        id: checksum
+        run: |
+          SHA=$(sha256sum build/markdown-clipper-*.zip | awk '{print $1}')
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/markdown-clipper-*.zip
+          name: Release ${{ github.ref_name }}
+          body: |
+            Automated release for Markdown Clipper version `${{ github.ref_name }}`.
+            
+            ### Installation Instructions
+            1. Download the attached `markdown-clipper-${{ github.ref_name }}.zip` asset.
+            2. Unzip the archive to a local folder.
+            3. Open Chrome and go to `chrome://extensions/`.
+            4. Turn on **Developer mode** (top-right).
+            5. Click **Load unpacked** (top-left) and select the unzipped directory.
+            
+            ### Automated Checksums
+            * **SHA-256**: `${{ steps.checksum.outputs.sha }}`
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
