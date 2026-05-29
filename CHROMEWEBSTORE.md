@@ -49,7 +49,7 @@ English
 | Asset | Dimensions | Status | Filename |
 |-------|-----------|--------|----------|
 | Store Icon | 128×128 PNG | ✅ Ready | `icons/icon-128.png` |
-| Screenshot 1 | 1280×800 | ⬜ Not created | |
+| Screenshot 1 | 1280×800 JPEG | ✅ Ready | `assets/screenshot.jpg` |
 | Screenshot 2 | 1280×800 | ⬜ Not created | |
 
 
