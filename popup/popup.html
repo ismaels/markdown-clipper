@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Clipper</title>
+  <link rel="stylesheet" href="popup.css">
+  <!-- Include Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Container with modern dark glassmorphic design -->
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">M</div>
+        <span class="app-title">Markdown Clipper</span>
+      </div>
+      <div class="badge-status">MV3</div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tab-navigation">
+      <button class="tab-btn active" data-tab="tab-clip">Clip Page</button>
+      <button class="tab-btn" data-tab="tab-search">Bookmarks</button>
+      <button class="tab-btn" data-tab="tab-settings">Settings</button>
+      <div class="tab-indicator"></div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <!-- Tab 1: Clip View -->
+      <section id="tab-clip" class="tab-content active">
+        <!-- Error or Warning message (e.g. if we cannot access page) -->
+        <div id="connection-warning" class="warning-banner hidden">
+          Cannot run on this page. Try reload or try a regular webpage.
+        </div>
+
+        <div class="form-group">
+          <label for="clip-title">Title</label>
+          <input type="text" id="clip-title" placeholder="Loading page title...">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="clip-tags">Tags (comma separated)</label>
+            <input type="text" id="clip-tags" placeholder="e.g. web, programming">
+          </div>
+          <div class="form-group flex-1">
+            <label for="clip-mode">Capture</label>
+            <select id="clip-mode">
+              <option value="entire">Full Page</option>
+              <option value="selection" id="option-selection" disabled>Selection</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="clip-description">Description</label>
+          <textarea id="clip-description" rows="2" placeholder="Loading page description..."></textarea>
+        </div>
+
+        <!-- Custom Options Toggles -->
+        <div class="options-grid">
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-clean" checked>
+            <span class="control-indicator"></span>
+            <span class="control-label">Clean source page DOM</span>
+          </label>
+        </div>
+
+        <!-- Summary Status Display -->
+        <div class="summary-status-card">
+          <div class="status-indicator-dot" id="status-dot"></div>
+          <span id="summary-status-text">Checking summarizer availability...</span>
+          <button id="btn-regenerate" class="btn-icon-action hidden" title="Regenerate Summary">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Collapsible Preview Accordion -->
+        <div class="preview-accordion">
+          <button class="accordion-trigger" id="preview-toggle">
+            <span>Show Markdown Summary Preview</span>
+            <span class="accordion-arrow">▼</span>
+          </button>
+          <div class="accordion-panel" id="preview-panel">
+            <pre class="preview-code"><code id="markdown-preview">YAML Front Matter + Summary loading...</code></pre>
+          </div>
+        </div>
+
+        <!-- Download Action -->
+        <button id="btn-download" class="btn-primary" disabled>
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download Summary Markdown
+        </button>
+      </section>
+
+      <!-- Tab 2: Bookmarks/Search View -->
+      <section id="tab-search" class="tab-content">
+        <!-- Search Input Header -->
+        <div class="search-bar-row">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="search-input" placeholder="Search titles, tags, summaries...">
+            <button id="btn-clear-search" class="btn-clear hidden" title="Clear Search">✕</button>
+          </div>
+          <button id="btn-sync-folder" class="btn-icon-inside" title="Re-scan Bookmarks Folder">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Folder Directory Warnings -->
+        <div id="search-folder-warning" class="folder-warning-banner">
+          Local save folder is not set up. Select a directory in Settings to query bookmarks.
+        </div>
+
+        <!-- Folder Access Expired Warning -->
+        <div id="folder-permission-card" class="folder-permission-card hidden">
+          <p>Access to your bookmarks folder has expired. Click below to grant permissions again.</p>
+          <button id="btn-grant-permission" class="btn-primary">Grant Folder Access</button>
+        </div>
+
+        <!-- Scrollable Search Results -->
+        <div class="search-results-list" id="search-results">
+          <div class="search-empty-state">
+            Select a bookmark folder and sync to see your saved items.
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 3: Settings View -->
+      <section id="tab-settings" class="tab-content">
+        <!-- Local Storage Location -->
+        <div class="settings-section">
+          <h3>Local Save Directory</h3>
+          <div class="folder-selection-card">
+            <div class="folder-path-display" id="folder-path-text">Downloads API (Default Folder)</div>
+            <button id="btn-select-folder" class="btn-secondary">Select Folder / Obsidian Vault</button>
+          </div>
+          <label class="toggle-control" style="margin-top: 10px;">
+            <input type="checkbox" id="toggle-direct-save" checked>
+            <span class="control-indicator"></span>
+            <span class="control-label">Save directly to folder (Skip downloads dialog)</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="setting-filename">Filename Template</label>
+          <select id="setting-filename">
+            <option value="title">Title only (e.g. My-Article.md)</option>
+            <option value="title-date">Title & Date (e.g. My-Article-20260527.md)</option>
+            <option value="domain-title">Domain & Title (e.g. github-com-My-Article.md)</option>
+            <option value="date-title">Date & Title (e.g. 20260527-My-Article.md)</option>
+          </select>
+        </div>
+
+        <div class="settings-section">
+          <h3>Included Front Matter Fields</h3>
+          <div class="checkbox-list">
+            <label class="checkbox-item">
+              <input type="checkbox" id="field-title" checked>
+              <span>Title</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" id="field-url" checked>
+              <span>URL</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" id="field-date" checked>
+              <span>Saved Date</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" id="field-description" checked>
+              <span>Description</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" id="field-author" checked>
+              <span>Author</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" id="field-tags" checked>
+              <span>Tags</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3>AI Summary Configuration</h3>
+          <div class="form-group">
+            <label for="setting-provider">Summary Engine</label>
+            <select id="setting-provider">
+              <option value="local">Chrome Built-in AI (Gemini Nano)</option>
+              <option value="gemini-api">Google Gemini API (Cloud)</option>
+              <option value="fallback">Extractive Fallback (Offline)</option>
+            </select>
+          </div>
+          <div class="form-group hidden" id="api-key-container">
+            <label for="setting-api-key">Gemini API Key</label>
+            <input type="password" id="setting-api-key" placeholder="AIStudio API Key...">
+          </div>
+          <div class="form-group">
+            <label for="setting-prompt">AI Prompt Guidelines</label>
+            <textarea id="setting-prompt" rows="3" placeholder="e.g. Summarize in 3 bullet points..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="setting-template">YAML Template Customize</label>
+          <span class="field-hint">Placeholders: {title}, {url}, {date}, {description}, {author}, {tags}</span>
+          <textarea id="setting-template" class="code-textarea" rows="4"></textarea>
+        </div>
+
+        <div class="settings-actions">
+          <button id="btn-reset" class="btn-secondary">Reset to Default</button>
+          <button id="btn-save-settings" class="btn-primary-sm">Save Preferences</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast-notification" class="toast hidden">
+      <span class="toast-icon">✓</span>
+      <span id="toast-message" class="toast-message">Markdown saved!</span>
+    </div>
+  </div>
+
+  <!-- Include library script -->
+  <script src="../libs/turndown.js"></script>
+  <!-- Include main logic script -->
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
