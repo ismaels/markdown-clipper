@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Clipper - Save Web Summaries directly to Obsidian</title>
+  <meta name="description" content="An offline-first Chrome Extension that extracts webpage content, generates AI summaries, and saves them directly into your local folders and Obsidian vaults.">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Include Premium Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Background Glowing Orbs for Aesthetics -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo-area">
+        <img src="assets/logo.png" alt="Markdown Clipper Logo" class="nav-logo">
+        <span class="nav-title">Markdown Clipper</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#faq">FAQ</a>
+        <a href="https://github.com/ismaels/markdown-clipper" class="btn-github" target="_blank">
+          <svg class="git-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+          GitHub
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content reveal-on-scroll">
+        <div class="badge">Manifest V3 Extension</div>
+        <h1>Save Web Content Directly to Your <span>Obsidian Vault</span></h1>
+        <p class="hero-text">
+          Markdown Clipper is an offline-first browser extension that extracts article content, generates local AI summaries, and saves them directly into local folders using the browser's native File System Access API. Bypasses the downloads manager entirely.
+        </p>
+        <div class="hero-actions">
+          <a href="https://chrome.google.com/webstore/devconsole/" class="btn-primary" target="_blank">
+            <svg class="store-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="10 8 16 12 10 16 10 8"></polygon>
+            </svg>
+            Add to Chrome (Free)
+          </a>
+          <a href="https://github.com/ismaels/markdown-clipper" class="btn-secondary" target="_blank">
+            View Source
+          </a>
+        </div>
+      </div>
+      
+      <!-- Floating Mockup Showcase -->
+      <div class="hero-showcase reveal-on-scroll delay-1">
+        <div class="showcase-border">
+          <img src="assets/clip_tab.jpg" alt="Markdown Clipper Extension Screenshot" class="showcase-img">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Features Section -->
+  <section id="features" class="features-section">
+    <div class="section-header reveal-on-scroll">
+      <h2>Designed for Speed and Privacy</h2>
+      <p>A full set of utilities to clean, summarize, save, and search webpages locally.</p>
+    </div>
+
+    <!-- Interactive Interactive Tabbed Showcase -->
+    <div class="interactive-tab-container reveal-on-scroll">
+      <div class="interactive-tab-controls">
+        <button class="interactive-control-btn active" data-showcase="clip">
+          <span class="control-num">01</span>
+          <span class="control-title">AI Summarizer</span>
+        </button>
+        <button class="interactive-control-btn" data-showcase="search">
+          <span class="control-num">02</span>
+          <span class="control-title">Bookmarks Search</span>
+        </button>
+        <button class="interactive-control-btn" data-showcase="settings">
+          <span class="control-num">03</span>
+          <span class="control-title">Obsidian Integration</span>
+        </button>
+        <button class="interactive-control-btn" data-showcase="context">
+          <span class="control-num">04</span>
+          <span class="control-title">Context Menus</span>
+        </button>
+      </div>
+
+      <div class="interactive-tab-display">
+        <!-- Clip Showcase -->
+        <div class="showcase-panel active" id="panel-clip">
+          <div class="panel-info">
+            <h3>Local & Cloud AI Summarization</h3>
+            <p>Summarize page contents on-demand. Choose between local on-device models for 100% offline free processing (Gemini Nano) or Cloud Gemini API for streaming high-quality summaries. Includes a structural extractive fallback for offline safety.</p>
+            <ul class="feature-checklist">
+              <li>Chrome Built-in AI (Gemini Nano)</li>
+              <li>Cloud Gemini 2.5 Flash streaming API</li>
+              <li>Heuristic paragraphs/headers extractor</li>
+            </ul>
+          </div>
+          <div class="panel-preview">
+            <img src="assets/clip_tab.jpg" alt="AI Summarizer tab mockup" class="panel-img">
+          </div>
+        </div>
+
+        <!-- Search Showcase -->
+        <div class="showcase-panel" id="panel-search">
+          <div class="panel-info">
+            <h3>Full-Text Vault Search</h3>
+            <p>Query your saved bookmarks directly inside the extension popup. It scans your folders, reads `.md` files, parses YAML metadata, and yields real-time filtered results matching titles, tags, and summary body snippets.</p>
+            <ul class="feature-checklist">
+              <li>Zero-dependency offline indexing</li>
+              <li>YAML metadata badge rendering</li>
+              <li>File delete hooks that sync to local disk</li>
+            </ul>
+          </div>
+          <div class="panel-preview">
+            <img src="assets/search_tab.jpg" alt="Search tab mockup" class="panel-img">
+          </div>
+        </div>
+
+        <!-- Settings Showcase -->
+        <div class="showcase-panel" id="panel-settings">
+          <div class="panel-info">
+            <h3>Direct Obsidian Directory Saving</h3>
+            <p>Write generated files silently straight to your Obsidian Vault using the File System Access API. Chosen folders are preserved securely in IndexedDB across popup closures so you can clip without distraction.</p>
+            <ul class="feature-checklist">
+              <li>IndexedDB FileSystemDirectoryHandle persistence</li>
+              <li>Customizable YAML Front Matter schemas</li>
+              <li>Download folder-naming configurations</li>
+            </ul>
+          </div>
+          <div class="panel-preview">
+            <img src="assets/settings_tab.jpg" alt="Settings configuration mockup" class="panel-img">
+          </div>
+        </div>
+
+        <!-- Context Showcase -->
+        <div class="showcase-panel" id="panel-context">
+          <div class="panel-info">
+            <h3>Right-Click Context Actions</h3>
+            <p>Clip webpages instantly. Highlight key passages and select "Clip Summary of Selection" or right-click anywhere to capture the page. Integrates background IndexedDB writes with Downloads API fallbacks.</p>
+            <ul class="feature-checklist">
+              <li>Selection & Page capture context items</li>
+              <li>Success toast status notifications</li>
+              <li>Downloads API fallback if write permission expires</li>
+            </ul>
+          </div>
+          <div class="panel-preview">
+            <img src="assets/context_menu.jpg" alt="Context Menu demonstration" class="panel-img">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="timeline-section">
+    <div class="timeline-bg-glow"></div>
+    <div class="section-header reveal-on-scroll">
+      <h2>How it Works</h2>
+      <p>From clean HTML scraper to structured Markdown notes in three steps.</p>
+    </div>
+
+    <div class="timeline-steps">
+      <!-- Step 1 -->
+      <div class="step-card reveal-on-scroll">
+        <div class="step-num">1</div>
+        <h4>Configure Your Vault</h4>
+        <p>Open settings, click "Select Folder" and pick your local folder or Obsidian vault directory. The permission handle is saved securely in IndexedDB.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-card reveal-on-scroll delay-1">
+        <div class="step-num">2</div>
+        <h4>Extract & Summarize</h4>
+        <p>Trigger clipping from the popup or context menus. The scraper sanitizes the page DOM, cleans headers/footers, and streams the AI summary.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-card reveal-on-scroll delay-2">
+        <div class="step-num">3</div>
+        <h4>Write File & Query</h4>
+        <p>The Markdown file is silently written to your folder. Open the Bookmarks tab to run full-text search queries on your saved clips instantly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section (Accordions) -->
+  <section id="faq" class="faq-section">
+    <div class="section-header reveal-on-scroll">
+      <h2>Frequently Asked Questions</h2>
+      <p>Have questions about privacy, configuration, or custom formats? We have answers.</p>
+    </div>
+
+    <div class="faq-accordion-list reveal-on-scroll">
+      <!-- Item 1 -->
+      <div class="faq-item">
+        <button class="faq-trigger">
+          <span>Is my page content sent to remote servers?</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-panel">
+          <p>No. Markdown Clipper is designed offline-first. If you use **Chrome Built-in AI (Gemini Nano)** or the **Extractive Fallback**, all text extraction, parsing, summarization, and disk saving occur entirely on your local machine. No data is collected, stored, or transmitted. If you use **Cloud Gemini API**, only the article text is sent to Google's generative models API using the API key you provide.</p>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <button class="faq-item" style="display: block; border: none; width: 100%; text-align: left; background: transparent;">
+        <div class="faq-trigger">
+          <span>How do I configure Chrome Gemini Nano (Built-in AI)?</span>
+          <span class="faq-arrow">▼</span>
+        </div>
+        <div class="faq-panel">
+          <p>To use Gemini Nano, ensure you are on a recent Chrome version (128+) and configure these browser flags:
+          <br><br>
+          1. Go to <code>chrome://flags/#optimization-guide-on-device-model</code> and select <strong>Enabled BypassPrefRequirement</strong>.
+          <br>
+          2. Go to <code>chrome://flags/#prompt-api-for-gemini-nano</code> and select <strong>Enabled</strong>.
+          <br>
+          3. Relaunch Chrome. Open settings in the extension popup and set the Summary Engine to "Chrome Built-in AI". Wait for Chrome to finish downloading the local model.
+          </p>
+        </div>
+      </button>
+
+      <!-- Item 3 -->
+      <div class="faq-item">
+        <button class="faq-trigger">
+          <span>Can I customize the front matter template?</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-panel">
+          <p>Yes. The settings tab features a customizable YAML Template text field. You can define your own placeholders (such as <code>{title}</code>, <code>{url}</code>, <code>{date}</code>, <code>{description}</code>, <code>{author}</code>, and <code>{tags}</code>) and change their ordering or keys to fit your Obsidian vault's metadata standards.</p>
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="faq-item">
+        <button class="faq-trigger">
+          <span>Why does the browser ask me to grant access to the folder?</span>
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-panel">
+          <p>To protect your local disk files, Google Chrome requires user interaction to re-verify directory access permissions whenever Chrome restarts. If access has expired, the Bookmarks tab will display a "Grant Folder Access" button. Clicking this button grants permissions to resume silent direct-saving and folder scanning.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Footer Section -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo-row">
+        <img src="assets/logo.png" alt="Logo" class="footer-logo">
+        <h3>Markdown Clipper</h3>
+      </div>
+      <p class="footer-desc">
+        A premium, offline-first Chrome Extension linking web content to local markdown notes.
+      </p>
+      <div class="footer-meta">
+        <span>© 2026 Markdown Clipper. Open-source under MIT License.</span>
+        <div class="footer-links">
+          <a href="https://github.com/ismaels/markdown-clipper" target="_blank">GitHub</a>
+          <a href="https://chrome.google.com/webstore/devconsole/" target="_blank">Chrome Store</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
