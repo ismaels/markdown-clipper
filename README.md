@@ -100,6 +100,11 @@ To enable the built-in Chrome AI summary engine:
 4. Relaunch Chrome.
 5. Open a web page, click the extension icon, choose **Chrome Built-in AI (Gemini Nano)** in the settings, and wait for Chrome to download the model (indicated in the popup status).
 
+### 3. Note on "Enhanced Safe Browsing" Warning
+If you see a warning stating **"This extension is not trusted by Enhanced Safe Browsing"** during installation from the Chrome Web Store, please note that this is a default security message shown for all newly registered developer accounts. 
+
+It does not represent a policy violation or security risk. Google automatically updates this status once a developer profile maintains compliance for **at least 28 days**. Because Markdown Clipper operates 100% locally on your machine (using offline models or direct disk writes) and contains no telemetry or data collection, it is entirely safe to install.
+
 ---
 
 ## 💻 How to Use
